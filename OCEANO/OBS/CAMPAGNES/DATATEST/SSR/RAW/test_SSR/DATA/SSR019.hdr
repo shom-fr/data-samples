@@ -1,0 +1,27 @@
+* Sea-Bird SBE 9 Data File:
+* FileName = D:\WEMSWOT\DONNEE_BRUTE\230411_AT_STOC3_1_SSR_RAD\SSR019.hdr
+* Software Version Seasave V 7.26.7.107
+* Temperature SN = 6528
+* Conductivity SN = 4968
+* Number of Bytes Per Scan = 45
+* Number of Voltage Words = 4
+* Number of Scans Averaged by the Deck Unit = 1
+* Append System Time to Every Scan
+* System UpLoad Time = Apr 11 2023 08:08:27
+* NMEA Latitude = 41 02.03 N
+* NMEA Longitude = 004 57.95 E
+* NMEA UTC (Time) = Apr 11 2023 07:52:35
+* Store Lat/Lon Data = Append to Every Scan
+** Temps[0-9]:0
+** Nebulosite[0-8]:1
+** Mer[0-9]:3
+** Glace[0-9]:0
+** Vitesse vent[nds]:12
+** Direction vent[0-360]:270
+** Direction houle[0-360]:999
+** Periode houle[s]:99
+** Pression atmospherique[hPa]:1019.6
+** Temperature air sec[deg C]:16.8
+** Temperature air humide[deg C]:12.4
+* System UTC = Apr 11 2023 08:08:27
+*END*

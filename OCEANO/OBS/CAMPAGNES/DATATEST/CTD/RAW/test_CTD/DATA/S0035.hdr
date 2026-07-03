@@ -1,0 +1,27 @@
+* Sea-Bird SBE 9 Data File:
+* FileName = D:\Proteion_2024\DATA\240330_AT_PELOPS_1_CTD_RAD\S0035.hdr
+* Software Version Seasave V 7.26.7.107
+* Temperature SN = 4892
+* Conductivity SN = 2453
+* Number of Bytes Per Scan = 45
+* Number of Voltage Words = 4
+* Number of Scans Averaged by the Deck Unit = 1
+* Append System Time to Every Scan
+* System UpLoad Time = Apr 03 2024 08:54:57
+* NMEA Latitude = 35 58.81 N
+* NMEA Longitude = 023 28.14 E
+* NMEA UTC (Time) = Apr 03 2024 08:52:00
+* Store Lat/Lon Data = Append to Every Scan
+** Temps[0-9]:0
+** Nebulosite[0-8]:1
+** Mer[0-9]:1
+** Glace[0-9]:0
+** Vitesse vent[nds]:08
+** Direction vent[0-360]:075
+** Direction houle[0-360]:000
+** Periode houle[s]:00
+** Pression atmospherique[hPa]:1018.8
+** Temperature air sec[deg C]:20.9
+** Temperature air humide[deg C]:16.1
+* System UTC = Apr 03 2024 08:54:57
+*END*
