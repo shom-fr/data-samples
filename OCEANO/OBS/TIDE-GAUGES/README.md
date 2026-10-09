@@ -18,3 +18,13 @@ curl "https://services.data.shom.fr/maregraphie/observation/json/3?sources=4&dtS
 ```
 
 puis rassemblées dans un fichier texte au format des exports REFMAR : une ligne `Date;Valeur;Source` par heure, précédée d'un en-tête de commentaires.
+
+## Marégraphe du Conquet
+
+Source : Campagne.
+
+| Fichier | Contenu |
+|---------|---------|
+| `OC_201610_TS_MG_EXSH0001.csv` | niveau de la mer et pression atmosphérique de la station EXSH0001 (48.36°N, 4.78°W), du 1er au 31 octobre 2016, avec un indicateur de qualité par colonne |
+
+Le fichier est sous-échantillonné : une mesure sur 5, soit toutes les 5 minutes au lieu de toutes les minutes.
