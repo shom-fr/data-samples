@@ -1,9 +1,7 @@
-# Thermosalinographe
+# Thermosalinograph
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+Source: field campaign.
 
-Source : Campagne.
-
-| Fichier | Contenu |
-|---------|---------|
-| `20150109_SBE21.txt` à `20150123_SBE21.txt` | un fichier par jour, du 9 au 23 janvier 2015, du thermosalinographe Sea-Bird SBE 21 d'un navire en Méditerranée nord-occidentale : position, température, salinité, conductivité, vitesse du son et densité de l'eau de surface toutes les 5 minutes |
+| File | Content |
+|------|---------|
+| `20150109_SBE21.txt` to `20150123_SBE21.txt` | one file per day, from 9 to 23 January 2015, of the Sea-Bird SBE 21 thermosalinograph of a ship in the northwestern Mediterranean: position, temperature, salinity, conductivity, sound speed and density of the surface water every 5 minutes |

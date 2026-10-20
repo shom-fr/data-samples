@@ -1,24 +1,22 @@
-# Fichiers divers
+# Miscellaneous files
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+## Image and GPS track
 
-## Image et trace GPS
+Source: field campaign.
 
-Source : Campagne.
+| File | Content |
+|------|---------|
+| `rgb1.tif` | georeferenced RGB image in GeoTIFF format, 400 x 400 pixels of 300 m |
+| `trace1.kml` | GPS track in KML format of a kayak trip of 5 May 2019, in the Brest roadstead |
 
-| Fichier | Contenu |
-|---------|---------|
-| `rgb1.tif` | image RGB géoréférencée au format GeoTIFF, 400 × 400 pixels de 300 m |
-| `trace1.kml` | trace GPS au format KML d'une sortie en kayak du 5 mai 2019, en rade de Brest |
+## Place names of the Iroise Sea
 
-## Toponymes de la mer d'Iroise
+Source: Shom, marine and coastal place names from the electronic navigational charts (ENC),
+test dataset in Open Data on the Iroise area.
+The metadata are described in the file `TOPONYMES_OPENDATA_IROISE/BDML_TOPONYMES_OPENDATA_IROISE.xml`.
 
-Source : Shom, toponymes marins et côtiers issus des cartes électroniques de navigation (ENC),
-jeu de données test en Open Data sur la zone Iroise.
-Les métadonnées sont décrites dans le fichier `TOPONYMES_OPENDATA_IROISE/BDML_TOPONYMES_OPENDATA_IROISE.xml`.
-
-| Fichier | Contenu |
-|---------|---------|
-| `TOPONYMES_OPENDATA_IROISE/toponymes_areas.*` | toponymes de zones, au format shapefile |
-| `TOPONYMES_OPENDATA_IROISE/toponymes_points.*` | toponymes ponctuels, au format shapefile |
-| `TOPONYMES_OPENDATA_IROISE/BDML_TOPONYMES_OPENDATA_IROISE.xml` | métadonnées du jeu de données |
+| File | Content |
+|------|---------|
+| `TOPONYMES_OPENDATA_IROISE/toponymes_areas.*` | place names of areas, in shapefile format |
+| `TOPONYMES_OPENDATA_IROISE/toponymes_points.*` | place names of points, in shapefile format |
+| `TOPONYMES_OPENDATA_IROISE/BDML_TOPONYMES_OPENDATA_IROISE.xml` | metadata of the dataset |

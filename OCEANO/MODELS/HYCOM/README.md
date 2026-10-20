@@ -1,17 +1,15 @@
 # HYCOM
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+## Iroise Sea
 
-## Mer d'Iroise
+Source: Shom HYCOM simulation, output on a regular grid.
 
-Source : simulation HYCOM du Shom, sortie sur grille régulière.
+| File | Content |
+|------|---------|
+| `hycom.iroise.sst_2D.small.nc` | hourly sea surface temperature of 3 June 2019, 5.73°W-4.25°W, 47.93°N-48.61°N |
 
-| Fichier | Contenu |
-|---------|---------|
-| `hycom.iroise.sst_2D.small.nc` | température de surface horaire du 3 juin 2019, 5.73°W-4.25°W, 47.93°N-48.61°N |
-
-Extraction avec les [NCO](https://nco.sourceforge.net) à partir d'une sortie de la simulation :
+Extraction with the [NCO](https://nco.sourceforge.net) from an output of the simulation:
 
 ```bash
-ncks -O -d X,72,131 -d Y,82,123 <sortie SST> hycom.iroise.sst_2D.small.nc
+ncks -O -d X,72,131 -d Y,82,123 <SST output> hycom.iroise.sst_2D.small.nc
 ```

@@ -1,2 +1,3 @@
 # data-samples
-Data samples used by Shom codes
+
+Samples of ocean observations and numerical model outputs.

@@ -1,25 +1,23 @@
 # WAVEWATCH III
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+## PREVIMER forecast on an unstructured grid
 
-## Prévision PREVIMER sur grille non structurée
+Source: [WAVEWATCH III](https://polar.ncep.noaa.gov/waves/wavewatch/) forecast of the PREVIMER system, NORGAS-UG configuration,
+Shom and Ifremer ([IOWAGA](http://wwz.ifremer.fr/iowaga/)).
 
-Source : prévision [WAVEWATCH III](https://polar.ncep.noaa.gov/waves/wavewatch/) du système PREVIMER, configuration NORGAS-UG,
-Shom et Ifremer ([IOWAGA](http://wwz.ifremer.fr/iowaga/)).
+| File | Content |
+|------|---------|
+| `PREVIMER_WW3-NORGAS-UG_20170306T00Z.small.nc` | significant height, period and direction of the waves of 6 March 2017, on a triangular grid, 5.4°W-4.2°W, 48.0°N-48.7°N |
 
-| Fichier | Contenu |
-|---------|---------|
-| `PREVIMER_WW3-NORGAS-UG_20170306T00Z.small.nc` | hauteur significative, période et direction des vagues le 6 mars 2017, sur une grille triangulaire, 5.4°W-4.2°W, 48.0°N-48.7°N |
+## Simulation on a regular grid
 
-## Simulation sur grille régulière
+Source: WAVEWATCH III simulation, regular grid FINIS250.
 
-Source : simulation WAVEWATCH III, grille régulière FINIS250.
+| File | Content |
+|------|---------|
+| `ww3.201801_extract_1jr.small.nc` | hourly significant height, direction and partitions from 4 to 5 January 2018, 5.21°W-4.75°W, 48.29°N-48.55°N, one point out of 3 |
 
-| Fichier | Contenu |
-|---------|---------|
-| `ww3.201801_extract_1jr.small.nc` | hauteur significative, direction et partitions horaires du 4 au 5 janvier 2018, 5.21°W-4.75°W, 48.29°N-48.55°N, un point sur 3 |
-
-Extraction avec les [NCO](https://nco.sourceforge.net) à partir du fichier mensuel `ww3.201801.nc` :
+Extraction with the [NCO](https://nco.sourceforge.net) from the monthly file `ww3.201801.nc`:
 
 ```bash
 ncks -O -d longitude,44,180,3 -d latitude,337,448,3 -v hs,dir,pdirc0,pdirc1,ptpc0,ptpc1 \

@@ -1,35 +1,33 @@
-# IBI - modèle régional Iberia-Biscay-Ireland du Copernicus Marine Service
+# IBI - Iberia-Biscay-Ireland regional model of the Copernicus Marine Service
 
-Source : produit [IBI_ANALYSISFORECAST_PHY_005_001](https://data.marine.copernicus.eu/product/IBI_ANALYSISFORECAST_PHY_005_001/description),
-configuration IBI36 de NEMO au 1/36°, analyses.
-Licence : [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
-diffusion libre en citant la source.
+Source: product [IBI_ANALYSISFORECAST_PHY_005_001](https://data.marine.copernicus.eu/product/IBI_ANALYSISFORECAST_PHY_005_001/description),
+NEMO IBI36 configuration at 1/36 degree, analyses.
+License: [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
+free to use with citation of the source.
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+## Extracts of June 2024 over the Iroise Sea
 
-## Extraits de juin 2024 sur la mer d'Iroise
+Domain: 5.78°W-4.24°W, 47.91°N-48.67°N.
 
-Domaine : 5.78°W-4.24°W, 47.91°N-48.67°N.
+| File | Content |
+|------|---------|
+| `ibi_temp_3D.small.nc` | temperature, daily means from 1 to 3 June 2024, 0-186 m |
+| `ibi_sal_3D.small.nc` | salinity, same |
+| `ibi_uv_3D.small.nc` | currents, same |
+| `ibi_ssh_2D.small.nc` | sea surface height, daily means from 1 to 3 June 2024 |
+| `ibi_sst_2D.small.nc` | sea surface temperature, hourly means of 1 June 2024 |
+| `ibi_2D_ssh_timeserie.nc` | hourly sea surface height from 1 to 4 June 2024 at the point 4.97°W, 48.25°N |
+| `ibi_temp_iroise.npz` | temperature of 1 June 2024 of `ibi_temp_3D.small.nc`, in numpy format |
 
-| Fichier | Contenu |
-|---------|---------|
-| `ibi_temp_3D.small.nc` | température, moyennes journalières du 1er au 3 juin 2024, 0-186 m |
-| `ibi_sal_3D.small.nc` | salinité, idem |
-| `ibi_uv_3D.small.nc` | courants, idem |
-| `ibi_ssh_2D.small.nc` | hauteur de mer, moyennes journalières du 1er au 3 juin 2024 |
-| `ibi_sst_2D.small.nc` | température de surface, moyennes horaires du 1er juin 2024 |
-| `ibi_2D_ssh_timeserie.nc` | hauteur de mer horaire du 1er au 4 juin 2024 au point 4.97°W, 48.25°N |
-| `ibi_temp_iroise.npz` | température du 1er juin 2024 de `ibi_temp_3D.small.nc`, au format numpy |
-
-Extraction avec le [Copernicus Marine Toolbox](https://help.marine.copernicus.eu/en/collections/9080063-copernicus-marine-toolbox) (version 1.1).
-Les commandes ci-dessous sont reconstituées à partir des métadonnées des fichiers :
+Extraction with the [Copernicus Marine Toolbox](https://help.marine.copernicus.eu/en/collections/9080063-copernicus-marine-toolbox) (version 1.1).
+The commands below are reconstructed from the metadata of the files:
 
 ```bash
-# Champs 3D journaliers : un fichier par variable (thetao, so, uo et vo, zos)
+# Daily 3D fields: one file per variable (thetao, so, uo and vo, zos)
 copernicusmarine subset --dataset-id cmems_mod_ibi_phy_anfc_0.027deg-3D_P1D-m \
     -v thetao -x -5.78 -X -4.24 -y 47.91 -Y 48.67 -z 0 -Z 190 \
     -t 2024-06-01 -T 2024-06-03 -f ibi_temp_3D.small.nc
-# Champs de surface horaires
+# Hourly surface fields
 copernicusmarine subset --dataset-id cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m \
     -v thetao -x -5.78 -X -4.24 -y 47.91 -Y 48.67 \
     -t 2024-06-01 -T 2024-06-01T23:00 -f ibi_sst_2D.small.nc
@@ -39,17 +37,30 @@ copernicusmarine subset --dataset-id cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m \
 ncks -O -d longitude,29 -d latitude,12 ibi_2D_ssh_timeserie.nc ibi_2D_ssh_timeserie.nc
 ```
 
-Le fichier `ibi_temp_iroise.npz` est créé par le script `Scripts/make-numpy-sample.py` du cours.
+The file `ibi_temp_iroise.npz` is built from the first day of `ibi_temp_3D.small.nc`: it holds the arrays `temp`, `depth`, `lat` and `lon` in `float32`,
+with the land points set to NaN and the fully masked deepest levels removed:
 
-Le produit d'analyse-prévision ne conserve que les deux dernières années :
-pour une période plus ancienne, il faut utiliser la réanalyse
+```python
+import numpy as np
+import xarray as xr
+
+with xr.open_dataset("ibi_temp_3D.small.nc") as ds:
+    temp = ds.thetao.isel(time=0)
+    valid = ~temp.isnull().all(dim=("latitude", "longitude"))
+    temp = temp.isel(depth=valid.values)
+    np.savez_compressed("ibi_temp_iroise.npz", temp=temp.values.astype("float32"), depth=temp.depth.values.astype("float32"),
+                        lat=temp.latitude.values.astype("float32"), lon=temp.longitude.values.astype("float32"))
+```
+
+The analysis and forecast product only keeps the last two years:
+for an older period, use the reanalysis
 [IBI_MULTIYEAR_PHY_005_002](https://data.marine.copernicus.eu/product/IBI_MULTIYEAR_PHY_005_002/description).
 
-## Courants horaires de mars 2025 sur la mer d'Iroise
+## Hourly currents of March 2025 over the Iroise Sea
 
-| Fichier | Contenu |
-|---------|---------|
-| `ibi_iroise_currents_hourly.nc` | courants de surface et hauteur de mer horaires, marée comprise, du 1er mars au 2 avril 2025, 5.6°W-4.4°W, 47.9°N-48.7°N |
+| File | Content |
+|------|---------|
+| `ibi_iroise_currents_hourly.nc` | hourly surface currents and sea surface height, tide included, from 1 March to 2 April 2025, 5.6°W-4.4°W, 47.9°N-48.7°N |
 
 ```bash
 copernicusmarine subset --dataset-id cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m \
@@ -57,4 +68,4 @@ copernicusmarine subset --dataset-id cmems_mod_ibi_phy_anfc_0.027deg-2D_PT1H-m \
     -f ibi_iroise_currents_hourly.nc
 ```
 
-Le fichier a ensuite été compressé sans perte (zlib) avec `xarray`.
+The file was then losslessly compressed (zlib) with `xarray`.

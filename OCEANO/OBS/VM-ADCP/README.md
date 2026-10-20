@@ -1,9 +1,7 @@
-# ADCP de coque
+# Hull-mounted ADCP
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+Source: PROTEVS 2015 cruise (S201500200_PROTEVS).
 
-Source : Campagne PROTEVS 2015 (S201500200_PROTEVS).
-
-| Fichier | Contenu |
-|---------|---------|
-| `OS_150_LTA_133.txt` | profils de courant de l'ADCP de coque Ocean Surveyor 150 kHz en moyennes longues (LTA), à partir du 22 janvier 2015 au large de la Corse : position, profondeur, composantes U et V, erreur, module et direction |
+| File | Content |
+|------|---------|
+| `OS_150_LTA_133.txt` | current profiles of the 150 kHz Ocean Surveyor hull-mounted ADCP in long time averages (LTA), from 22 January 2015 off Corsica: position, depth, U and V components, error, magnitude and direction |
