@@ -68,3 +68,31 @@ sst = ds.analysed_sst.sel(longitude=slice(3.0, 6.0), latitude=slice(41.5, 43.5))
 sst = sst.load()
 ```
 
+## Wind of the Gulf of Lion, daily
+
+Source: dataset `cmems_obs-wind_glo_phy_my_l4_0.25deg_PT1H` (hourly wind at 0.25 degree, from June 1994 to October 2009) of the product
+[WIND_GLO_PHY_L4_MY_012_006](https://data.marine.copernicus.eu/product/WIND_GLO_PHY_L4_MY_012_006/description)
+of the Copernicus Marine Service.
+License: [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
+free to use with citation of the source.
+
+| File | Content |
+|------|---------|
+| `wind_l4_gulf_of_lion_daily_1994-2009.nc` | daily means of the eastward and northward wind (`eastward_wind` and `northward_wind`, m/s) from 1 June 1994 to 31 October 2009 (5632 days, none missing), on 2.5°E-6.5°E and 41°N-44°N (12 x 16 grid points of 0.25 degree), packed as 16-bit integers with a `scale_factor` (0.01 m/s) |
+
+The wind of the product is the *stress-equivalent wind* at 10 m, which is the wind that would give the observed wind stress in neutral conditions.
+The wind stress components of the product are not kept: they have aberrant values (up to 3e7 N/m2, in 0.5% of the points, only from 1994 to 1999)
+and the stress is easily computed from the wind with a drag formula.
+The grid includes land points, where the product gives the wind of the atmospheric model it blends with the observations.
+
+```python
+import copernicusmarine as cm
+
+ds = cm.open_dataset(dataset_id="cmems_obs-wind_glo_phy_my_l4_0.25deg_PT1H", variables=["eastward_wind", "northward_wind"],
+                     coordinates_selection_method="outside")
+x = ds.sel(longitude=slice(2.5, 6.5), latitude=slice(41.0, 44.0), time=slice("1995-01-01", "1995-01-31")).load()
+daily = x.resample(time="D").mean()
+```
+
+The hourly files are read month by month, because a long period in one request can fail.
+
