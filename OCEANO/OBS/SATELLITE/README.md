@@ -45,3 +45,26 @@ sla = sla.assign_coords(longitude=sla.longitude % 360).sortby("longitude")
 ```
 
 For the wind, each year is read with `isel(time=slice(None, None, 6))` before the spatial average and the monthly mean (`resample(time="MS").mean()`).
+
+## Sea surface temperature of the Gulf of Lion and of the Iroise Sea
+
+Source: dataset `C3S-GLO-SST-L4-REP-OBS-SST` (reprocessed global sea surface temperature at 0.05 degree, daily, 1982-2024) of the product
+[SST_GLO_SST_L4_REP_OBSERVATIONS_010_024](https://data.marine.copernicus.eu/product/SST_GLO_SST_L4_REP_OBSERVATIONS_010_024/description)
+of the Copernicus Marine Service.
+License: [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
+free to use with citation of the source.
+
+| File | Content |
+|------|---------|
+| `sst_daily_boxes_1982-2024.nc` | daily sea surface temperature in degrees C from 1 January 1982 to 31 December 2024 (15706 days), averaged over two boxes: `gulf_of_lion` (3°E-6°E, 41.5°N-43.5°N) and `iroise` (6.5°W-4°W, 47.5°N-49°N), packed as 16-bit integers with a `scale_factor` (0.01 degrees C) |
+
+The reprocessed product combines the observations of satellites whose sensors change over time, which may affect long-term trends.
+
+```python
+import copernicusmarine as cm
+
+ds = cm.open_dataset(dataset_id="C3S-GLO-SST-L4-REP-OBS-SST", variables=["analysed_sst"], coordinates_selection_method="outside")
+sst = ds.analysed_sst.sel(longitude=slice(3.0, 6.0), latitude=slice(41.5, 43.5)).mean(("latitude", "longitude")) - 273.15
+sst = sst.load()
+```
+
