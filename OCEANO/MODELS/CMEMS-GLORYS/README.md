@@ -11,6 +11,7 @@ Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https
 |---------|---------|
 | `glorys_gulfstream_3d.nc` | température, salinité, courants et hauteur de mer, moyenne journalière du 1er octobre 2019, 72°W-62°W, 34°N-42°N, 0-2000 m, moyennés sur 2 × 2 mailles (1/6°) |
 | `glorys_gulfstream_ssh.nc` | hauteur de mer journalière du 15 septembre au 14 octobre 2019, 75°W-50°W, 30°N-44°N |
+| `glorys_pacific_sst_monthly.nc` | température à 0.5 m, moyenne mensuelle de janvier 1993 à décembre 2025 (396 mois), Pacifique tropical 20°S-20°N, 120°E-80°O, moyennée sur 1° |
 
 Extraction avec le [Copernicus Marine Toolbox](https://help.marine.copernicus.eu/en/collections/9080063-copernicus-marine-toolbox) :
 
@@ -28,4 +29,13 @@ copernicusmarine subset --dataset-id cmems_mod_glo_phy_my_0.083deg_P1D-m \
 ```python
 ds = xr.open_dataset("glorys_gulfstream_3d.nc")
 ds.coarsen(latitude=2, longitude=2, boundary="trim").mean().to_netcdf(...)
+```
+
+`glorys_pacific_sst_monthly.nc` vient du jeu `cmems_mod_glo_phy-all_my_0.25deg_P1M-m` (membre `thetao_glor`) du produit
+[GLOBAL_MULTIYEAR_PHY_ENS_001_031](https://data.marine.copernicus.eu/product/GLOBAL_MULTIYEAR_PHY_ENS_001_031/description).
+Il est extrait en deux moitiés autour de la date de changement de jour, moyenné sur 4×4 mailles et exprimé en longitudes de 0 à 360°
+par `Scripts/make-pacific-samples.py`, qui l'enregistre en entiers de 16 bits avec `scale_factor` (précision de 0.001 °C) :
+
+```bash
+python Scripts/make-pacific-samples.py sst
 ```
