@@ -1,19 +1,17 @@
-# Observations satellitaires
+# Satellite observations
 
-Ce fichier est utilisé par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+## Copernicus Marine Service L4 wind
 
-## Vent L4 du Copernicus Marine Service
+Source: product [WIND_GLO_PHY_L4_MY_012_006](https://data.marine.copernicus.eu/product/WIND_GLO_PHY_L4_MY_012_006/description),
+hourly 10 m wind at 1/8 degree, which combines satellite scatterometers and the ERA5 reanalysis (KNMI).
+License: [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
+free to use with citation of the source.
 
-Source : produit [WIND_GLO_PHY_L4_MY_012_006](https://data.marine.copernicus.eu/product/WIND_GLO_PHY_L4_MY_012_006/description),
-vent à 10 m horaire au 1/8°, qui combine les diffusiomètres satellitaires et la réanalyse ERA5 (KNMI).
-Licence : [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
-diffusion libre en citant la source.
+| File | Content |
+|------|---------|
+| `wind_l4_iroise_202503.nc` | eastward and northward hourly wind from 1 March to 2 April 2025, 5.7°W-4.3°W, 47.8°N-48.8°N |
 
-| Fichier | Contenu |
-|---------|---------|
-| `wind_l4_iroise_202503.nc` | composantes est et nord du vent horaire du 1er mars au 2 avril 2025, 5.7°W-4.3°W, 47.8°N-48.8°N |
-
-Extraction avec le [Copernicus Marine Toolbox](https://help.marine.copernicus.eu/en/collections/9080063-copernicus-marine-toolbox) :
+Extraction with the [Copernicus Marine Toolbox](https://help.marine.copernicus.eu/en/collections/9080063-copernicus-marine-toolbox):
 
 ```bash
 copernicusmarine subset --dataset-id cmems_obs-wind_glo_phy_my_l4_0.125deg_PT1H \
@@ -21,17 +19,29 @@ copernicusmarine subset --dataset-id cmems_obs-wind_glo_phy_my_l4_0.125deg_PT1H 
     -t 2025-03-01 -T 2025-04-02 -f wind_l4_iroise_202503.nc
 ```
 
-## Pacifique tropical, mensuel
+## Tropical Pacific, monthly
 
-Domaine 20°S-20°N, 120°E-80°O, moyenné sur 1° et en longitudes de 0 à 360°, extrait par `Scripts/make-pacific-samples.py` (compte Copernicus Marine nécessaire) et enregistré en entiers de 16 bits avec `scale_factor` (précision de 0.1 mm pour le SLA et de 0.001 m/s pour le vent).
+Domain 20°S-20°N, 120°E-80°W, averaged on 1 degree grid cells, with longitudes from 0 to 360°E.
+The files are packed as 16-bit integers with a `scale_factor` (precision of 0.1 mm for the sea level anomaly and 0.001 m/s for the wind).
 
-| Fichier | Contenu |
-|---------|---------|
-| `sla_l4_pacific_monthly.nc` | anomalie de hauteur de mer mensuelle de janvier 1993 à avril 2026, jeu `cmems_obs-sl_glo_phy-ssh_my_allsat-l4-duacs-0.125deg_P1M-m` du produit [SEALEVEL_GLO_PHY_L4_MY_008_047](https://data.marine.copernicus.eu/product/SEALEVEL_GLO_PHY_L4_MY_008_047/description) |
-| `wind_l4_pacific_monthly.nc` | composantes est et nord du vent mensuel de juin 1994 à octobre 2009 (185 mois), jeu `cmems_obs-wind_glo_phy_my_l4_0.25deg_PT1H` du produit WIND_GLO_PHY_L4_MY_012_006, calculé à partir d'un pas de 6 h |
+| File | Content |
+|------|---------|
+| `sla_l4_pacific_monthly.nc` | monthly sea level anomaly from January 1993 to April 2026, dataset `cmems_obs-sl_glo_phy-ssh_my_allsat-l4-duacs-0.125deg_P1M-m` of the product [SEALEVEL_GLO_PHY_L4_MY_008_047](https://data.marine.copernicus.eu/product/SEALEVEL_GLO_PHY_L4_MY_008_047/description), averaged on 8x8 grid cells |
+| `wind_l4_pacific_monthly.nc` | monthly eastward and northward wind from June 1994 to October 2009 (185 months), dataset `cmems_obs-wind_glo_phy_my_l4_0.25deg_PT1H` of the product WIND_GLO_PHY_L4_MY_012_006, from 6-hourly samples averaged on 4x4 grid cells |
 
-```bash
-python Scripts/make-pacific-samples.py sla
-python Scripts/make-pacific-samples.py wind   # environ une heure
+The dateline cannot be crossed by a single selection: the two halves of the domain are extracted separately, averaged, then concatenated.
+Example for the sea level anomaly:
+
+```python
+import copernicusmarine as cm
+import xarray as xr
+
+ds = cm.open_dataset(dataset_id="cmems_obs-sl_glo_phy-ssh_my_allsat-l4-duacs-0.125deg_P1M-m", variables=["sla"],
+                     coordinates_selection_method="outside")
+halves = [ds.sla.sel(latitude=slice(-20, 20), longitude=lon).load() for lon in (slice(120, 180), slice(-180, -80))]
+halves = [h.coarsen(latitude=8, longitude=8, boundary="trim").mean() for h in halves]
+sla = xr.concat(halves, "longitude")
+sla = sla.assign_coords(longitude=sla.longitude % 360).sortby("longitude")
 ```
 
+For the wind, each year is read with `isel(time=slice(None, None, 6))` before the spatial average and the monthly mean (`resample(time="MS").mean()`).

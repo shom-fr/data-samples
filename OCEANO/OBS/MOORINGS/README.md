@@ -1,21 +1,20 @@
-# Mouillages tropicaux
+# Tropical moorings
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+Source: [TAO/TRITON](https://www.pmel.noaa.gov/gtmba/) moorings of the tropical Pacific (Global Tropical Moored Buoy Array),
+distributed by [NOAA PMEL](https://www.pmel.noaa.gov/tao/drupal/disdel/) on its ERDDAP server.
+Free data, to be cited with their source: NOAA/PMEL.
 
-Source : réseau de mouillages [TAO/TRITON](https://www.pmel.noaa.gov/gtmba/) du Pacifique tropical (Global Tropical Moored Buoy Array),
-distribué par le [NOAA PMEL](https://www.pmel.noaa.gov/tao/drupal/disdel/) et son serveur ERDDAP.
-Données libres, à citer avec leur source : NOAA/PMEL.
+| File | Content |
+|------|---------|
+| `tao_0n140w_daily_temperature.nc` | daily temperature of the equatorial mooring at 140°W, from 1996-01-01 to 2002-12-30, at 15 depths from 1 to 300 m |
 
-| Fichier | Contenu |
-|---------|---------|
-| `tao_0n140w_daily_temperature.nc` | température journalière du mouillage de l'équateur à 140°O, du 1er janvier 1996 au 30 décembre 2002, à 15 profondeurs de 1 à 300 m |
+The depths are those of the sensors: they are not all measured every day, and the levels at 180 and 200 m cover less than half of the days.
+Levels with less than 35% of valid days were dropped.
+The file is packed as 16-bit integers with a `scale_factor` (0.001 degrees C of precision).
 
-Les profondeurs sont celles des capteurs : toutes ne sont pas mesurées tous les jours, et les niveaux de 180 et 200 m comptent moins de la moitié des jours.
-Le fichier est enregistré en entiers de 16 bits avec `scale_factor` (précision de 0.001 °C).
+The data come from the `pmelTaoDyT` dataset of the
+[NOAA ERDDAP server](https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyT.html):
 
-Téléchargement et mise en forme par `Scripts/make-tao-sample.py`, avec le jeu `pmelTaoDyT` du serveur
-[ERDDAP de NOAA](https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyT.html) :
-
-```bash
-python Scripts/make-tao-sample.py 0n140w 1996-01-01 2002-12-31
+```
+https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyT.csv?station,longitude,latitude,time,depth,T_20&station="0n140w"&time>=1996-01-01T00:00:00Z&time<=2002-12-31T00:00:00Z&depth<=300
 ```

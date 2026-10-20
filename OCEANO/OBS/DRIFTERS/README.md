@@ -1,40 +1,47 @@
-# Bouées dérivantes de surface
+# Surface drifting buoys
 
-Ces fichiers sont utilisés par le [cours de python pour l'océanographie](https://gitlab.com/GitShom/STM/cours-python-oceano) du Shom.
+Source: [Copernicus Marine Service](https://marine.copernicus.eu) *In Situ* product *Global Ocean - Coriolis near-real time currents from drifting buoys*
+(in collaboration with EMODnet), files `GL_TS_DC_<platform>.nc`.
+License: [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
+free to use with citation of the source.
+Near real time data extracted on 9 October 2026: they may be reprocessed later.
 
-Source : produit *Global Ocean - Coriolis near-real time currents from drifting buoys* du
-[Copernicus Marine Service](https://marine.copernicus.eu) (*In Situ*, collaboration avec EMODnet), fichiers `GL_TS_DC_<plateforme>.nc`.
-Licence : [Copernicus Marine Service](https://marine.copernicus.eu/user-corner/service-commitments-and-licence),
-diffusion libre en citant la source.
-Données en temps quasi réel, extraites le 9 octobre 2026 : elles peuvent être retraitées ensuite.
+| File | Buoy | Area | Period | Hours |
+|------|------|------|--------|-------|
+| `drifter_7894569.nc` | SVP B (EUMETNET) | North Atlantic, from 44°N 42°W to 49°N 5°W, Celtic shelf at the end of the record | 2025-11-16 to 2026-09-30 | 7561 |
+| `drifter_6802050.nc` | SVP SIO (OGS) | Western Mediterranean, 37.6°N-44°N, 1.4°E-9.2°E | 2025-07-20 to 2026-09-30 | 9594 |
+| `drifter_7810617.nc` | SVP B SIO (Lagrangian Drifter Laboratory) | Ionian Sea, 34.3°N-39°N, 17.1°E-21.3°E | 2026-01-23 to 2026-09-30 | 5708 |
 
-| Fichier | Bouée | Zone | Période | Heures |
-|---------|-------|------|---------|--------|
-| `drifter_7894569.nc` | SVP B (EUMETNET) | Atlantique nord, de 44°N 42°O à 49°N 5°O, plateau celtique en fin de série | 2025-11-16 → 2026-09-30 | 7 561 |
-| `drifter_6802050.nc` | SVP SIO (OGS) | Méditerranée occidentale, 37.6°N-44°N, 1.4°E-9.2°E | 2025-07-20 → 2026-09-30 | 9 594 |
-| `drifter_7810617.nc` | SVP B SIO (Lagrangian Drifter Laboratory) | mer Ionienne, 34.3°N-39°N, 17.1°E-21.3°E | 2026-01-23 → 2026-09-30 | 5 708 |
+Each file has a single `time` dimension (hourly positions, with a few gaps), the coordinates `latitude` and `longitude`, and:
 
-Chaque fichier a une seule dimension `time` (positions horaires, avec quelques trous), les coordonnées `latitude` et `longitude`, et :
-
-| Variable | Contenu |
+| Variable | Content |
 |----------|---------|
-| `u`, `v` | courant à l'immersion de l'ancre (m/s), déduit des positions horaires |
-| `temp` | température de surface (°C) |
-| `uwind`, `vwind` | vent d'un modèle à la position de la bouée (m/s), pas une mesure |
+| `u`, `v` | current at the drogue depth (m/s), derived from the hourly positions |
+| `temp` | sea surface temperature (degrees C) |
+| `uwind`, `vwind` | wind from a model at the buoy position (m/s), not a measurement |
 
-## Points d'attention
+## Notes
 
-* Les **drapeaux de qualité** sont tous à 1, mais il reste des valeurs aberrantes : `drifter_6802050.nc` a un pic isolé à 2.4 m/s le 12 juin 2026.
-* Les **valeurs de remplissage** du vent (999.9) sont déjà remplacées par `NaN` : 23 points dans `drifter_6802050.nc`, 22 dans `drifter_7810617.nc`.
-* Les attributs `start_mission_date`, `end_mission_date` et `estimated_drogue_off_date` situent la fin de la mission, ou de l'ancre,
-  **avant la fin des séries** : après cette date, la bouée ne suit peut-être plus l'eau à 15 m et subit l'effet du vent.
-  Le pic inertiel et la marée restent pourtant bien visibles avant et après. Les valeurs absolues des courants sont à interpréter avec prudence.
-* Les trous sont conservés : pour une série horaire régulière, utiliser `reindex` sur une grille horaire.
+* The **quality flags** of the original files are all 1, but some outliers remain: `drifter_6802050.nc` has an isolated 2.4 m/s spike on 2026-06-12.
+* The **fill values** of the wind (999.9) are replaced by `NaN`: 23 points in `drifter_6802050.nc` and 22 in `drifter_7810617.nc`.
+* The global attributes `start_mission_date`, `end_mission_date` and `estimated_drogue_off_date` place the end of the mission, or of the drogue,
+  **before the end of the records**: afterwards the buoy may no longer follow the water at 15 m and is more exposed to the wind.
+  Tidal and inertial oscillations remain clearly visible before and after that date. Absolute currents should be interpreted with care.
+* The gaps are kept as they are: use `reindex` to get a regular hourly series.
 
-## Préparation
+## Processing
 
-Les fichiers d'origine sont simplifiés par `Scripts/make-drifter-samples.py` (une dimension de temps, drapeaux et tension de vent retirés, valeurs de remplissage masquées) :
+In the original files, the variables are stored on three depth levels, only one of which holds values:
+the wind on level 0, the temperature on level 1 and the currents on level 2. They were rewritten with a single time dimension,
+without the quality flags and the wind stress:
 
-```bash
-python Scripts/make-drifter-samples.py GL_TS_DC_7894569.nc GL_TS_DC_6802050.nc GL_TS_DC_7810617.nc
+```python
+ds = xr.open_dataset("GL_TS_DC_7894569.nc")
+out = xr.Dataset(
+    {"u": ("time", ds.EWCT.isel(DEPTH=2).values), "v": ("time", ds.NSCT.isel(DEPTH=2).values),
+     "temp": ("time", ds.TEMP.isel(DEPTH=1).values),
+     "uwind": ("time", ds.WSPE_MODEL.isel(DEPTH=0).where(lambda x: x < 900).values),
+     "vwind": ("time", ds.WSPN_MODEL.isel(DEPTH=0).where(lambda x: x < 900).values)},
+    coords={"time": ds.TIME.values, "latitude": ("time", ds.LATITUDE.values),
+            "longitude": ("time", ds.LONGITUDE.values)})
 ```
